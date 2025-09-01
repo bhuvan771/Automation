@@ -1,0 +1,445 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1xRypJUBDST-54mz87E6GRtHVeHwTbkEG",
+          "mode": "list",
+          "cachedResultName": "X images",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1xRypJUBDST-54mz87E6GRtHVeHwTbkEG"
+        },
+        "event": "watchFolderUpdated"
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "07e963b8-dff9-460f-abd3-cee0959f1321",
+      "name": "Google Drive Trigger",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "M5hJaD1JaBfKWqAU",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "11L5nMoHBxQ_JMFKBrA3wYv7ywBovaZ2icVKu2uEpSlE",
+          "mode": "list",
+          "cachedResultName": "Automation X",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11L5nMoHBxQ_JMFKBrA3wYv7ywBovaZ2icVKu2uEpSlE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Captions",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11L5nMoHBxQ_JMFKBrA3wYv7ywBovaZ2icVKu2uEpSlE/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "status",
+              "lookupValue": "pending"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        0
+      ],
+      "id": "11502355-ba16-43a1-b7a7-55bdd8c77e57",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "sTOzTdsFrzcqDfjl",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.imageurl }}",
+          "mode": "url"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        448,
+        0
+      ],
+      "id": "5ef80fda-9c09-4294-8dc9-3fe402c3f82a",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "M5hJaD1JaBfKWqAU",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://upload.twitter.com/1.1/media/upload.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth1Api",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "media",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        672,
+        0
+      ],
+      "id": "f3f05aef-969e-4855-90bd-5324e56b0f2b",
+      "name": "HTTP Request",
+      "credentials": {
+        "oAuth1Api": {
+          "id": "rqNv520KUznYIiVO",
+          "name": "Unnamed credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ $('Get row(s) in sheet').item.json.Caption }}",
+        "additionalFields": {
+          "attachments": "={{ $json.media_id_string }}"
+        }
+      },
+      "type": "n8n-nodes-base.twitter",
+      "typeVersion": 2,
+      "position": [
+        896,
+        0
+      ],
+      "id": "6b5351a0-2d8c-46f7-afab-02f818d21ceb",
+      "name": "Create Tweet",
+      "credentials": {
+        "twitterOAuth2Api": {
+          "id": "5ZEGPAycipVljaFa",
+          "name": "X account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "11L5nMoHBxQ_JMFKBrA3wYv7ywBovaZ2icVKu2uEpSlE",
+          "mode": "list",
+          "cachedResultName": "Automation X",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11L5nMoHBxQ_JMFKBrA3wYv7ywBovaZ2icVKu2uEpSlE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 630966515,
+          "mode": "list",
+          "cachedResultName": "Postlog",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11L5nMoHBxQ_JMFKBrA3wYv7ywBovaZ2icVKu2uEpSlE/edit#gid=630966515"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "FileID": "={{ $('Google Drive Trigger').item.json.id }}",
+            "Filename": "={{ $('Google Drive Trigger').item.json.name }}",
+            " CaptionUsed": "={{ $('Get row(s) in sheet').item.json.Caption }}",
+            " TweetID": "={{ $json.id }}",
+            "Status": "done",
+            " Time": "={{$now}}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": " Time",
+              "displayName": " Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "FileID",
+              "displayName": "FileID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Filename",
+              "displayName": "Filename",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": " CaptionUsed",
+              "displayName": " CaptionUsed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": " TweetID",
+              "displayName": " TweetID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1120,
+        0
+      ],
+      "id": "1477d0bb-e6d8-424c-a9a9-0be51eec76f8",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "sTOzTdsFrzcqDfjl",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "11L5nMoHBxQ_JMFKBrA3wYv7ywBovaZ2icVKu2uEpSlE",
+          "mode": "list",
+          "cachedResultName": "Automation X",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11L5nMoHBxQ_JMFKBrA3wYv7ywBovaZ2icVKu2uEpSlE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Captions",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11L5nMoHBxQ_JMFKBrA3wYv7ywBovaZ2icVKu2uEpSlE/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{ $('Get row(s) in sheet').item.json.row_number }}",
+            "status": "done"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": " Filename",
+              "displayName": " Filename",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Caption",
+              "displayName": "Caption",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "imageurl",
+              "displayName": "imageurl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1344,
+        0
+      ],
+      "id": "c7dd9d8f-d1f5-4ef3-9b9a-8a0d52feca38",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "sTOzTdsFrzcqDfjl",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Drive Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Create Tweet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Tweet": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "4e44e5ec-0c30-4dc9-bbdf-5c23c074e82b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "17b87f94103ddcd4cad4f071b6819f52388b7e8482fedb5e783f45b3da515d11"
+  },
+  "id": "8cMQOBLTDvsz7jog",
+  "tags": []
+}
