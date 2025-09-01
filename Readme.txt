@@ -21,9 +21,7 @@ The workflow is built using **n8n** and integrates with **Google Drive, Google S
 
  `workflow.json` → Exported n8n workflow
  `README.md` → Documentation
- `screenshots/` → Workflow + Google Sheet + Drive folder screenshots
- `Automation Done.mp4` → Demo video of the workflow in action
-
+ 
 
 
  Requirements
